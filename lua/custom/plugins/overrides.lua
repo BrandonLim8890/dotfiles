@@ -1,6 +1,35 @@
 -- Overrides for plugins defined in init.lua (kickstart base config).
 -- These specs are merged by lazy.nvim with the base specs via the plugin name key.
 
+local env = require 'custom.env'
+
+-- Install extra Mason tools that kickstart's `servers` table in init.lua doesn't
+-- own. We hook `User VeryLazy` (fired after every plugin spec has loaded) so the
+-- mason registry is ready, and so we don't have to touch init.lua to stay close
+-- to upstream kickstart.
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VeryLazy',
+  once = true,
+  callback = function()
+    local extras = { 'eslint-lsp' } -- used by lua/custom/plugins/ts.lua on both machines
+    if not env.is_hubspot then
+      -- On HubSpot machines bend provides typescript-language-server on $PATH.
+      table.insert(extras, 'typescript-language-server')
+    end
+
+    local ok, registry = pcall(require, 'mason-registry')
+    if not ok then
+      return
+    end
+    for _, name in ipairs(extras) do
+      local pkg_ok, pkg = pcall(registry.get_package, name)
+      if pkg_ok and not pkg:is_installed() then
+        pkg:install()
+      end
+    end
+  end,
+})
+
 return {
   -- ── Conform: restore your formatter list ─────────────────────────────
   {

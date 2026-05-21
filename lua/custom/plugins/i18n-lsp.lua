@@ -1,5 +1,5 @@
-local is_hubspot_machine = vim.uv.fs_stat(vim.env.HOME .. '/.hubspot')
-if not is_hubspot_machine then
+local env = require 'custom.env'
+if not env.is_hubspot then
   return {}
 end
 

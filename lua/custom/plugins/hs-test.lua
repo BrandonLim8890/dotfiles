@@ -1,3 +1,8 @@
+local env = require 'custom.env'
+if not env.is_hubspot then
+  return {}
+end
+
 return {
   'nvim-neotest/neotest',
   dependencies = {

@@ -1,3 +1,5 @@
+local env = require 'custom.env'
+
 local M = {
   key = 'nvim_cmp_hs_translations',
   cache = {
@@ -370,32 +372,33 @@ function M.goto_definition()
   end
 end
 
-local is_hubspot_machine = vim.uv.fs_stat(vim.env.HOME .. '/.hubspot')
 function M.setup()
-  if is_hubspot_machine then
+  if env.is_hubspot then
     M.parse_and_cache_translations()
   end
 end
 
-vim.api.nvim_create_autocmd('VimEnter', {
-  once = true,
-  callback = function()
-    vim.schedule(function()
-      M.setup()
-    end)
-  end,
-})
+if env.is_hubspot then
+  vim.api.nvim_create_autocmd('VimEnter', {
+    once = true,
+    callback = function()
+      vim.schedule(function()
+        M.setup()
+      end)
+    end,
+  })
 
-vim.api.nvim_create_autocmd('BufWritePost', {
-  pattern = '*/en.lyaml',
-  callback = function()
-    vim.schedule(function()
-      M.cache.completions = {}
-      M.cache.translations = {}
-      M.parse_and_cache_translations()
-    end)
-  end,
-})
+  vim.api.nvim_create_autocmd('BufWritePost', {
+    pattern = '*/en.lyaml',
+    callback = function()
+      vim.schedule(function()
+        M.cache.completions = {}
+        M.cache.translations = {}
+        M.parse_and_cache_translations()
+      end)
+    end,
+  })
+end
 
 -- ============================================================================
 -- MONITORING & DEBUGGING
@@ -407,6 +410,7 @@ M._debug = {
   system_call_count = 0,
 }
 
+if env.is_hubspot then
 -- Command to show detailed cache statistics
 vim.api.nvim_create_user_command('I18nStats', function()
   local comp_count = 0
@@ -539,6 +543,7 @@ get_translation_files = function(root_dir)
   M._debug.system_call_count = M._debug.system_call_count + 1
   return original_get_files(root_dir)
 end
+end -- end env.is_hubspot guard
 
 local plugin_spec = {}
 

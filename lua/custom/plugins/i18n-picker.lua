@@ -127,8 +127,8 @@ function M.open()
   find_translation()
 end
 
-local is_hubspot_machine = vim.loop.fs_stat(vim.env.HOME .. '/.hubspot')
-if not is_hubspot_machine then
+local env = require 'custom.env'
+if not env.is_hubspot then
   return {}
 end
 
