@@ -31,6 +31,11 @@ return {
       '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
       desc = 'Buffer Diagnostics (Trouble)',
     },
+    {
+      '<leader>qq',
+      '<cmd>Trouble qflist toggle<cr>',
+      desc = 'Quickfix List (Trouble)',
+    },
     -- Navigation
     {
       '[q',

@@ -167,4 +167,83 @@ vim.keymap.set({ 'n', 'v' }, '<leader>ao', function()
   open_prompt_editor(context, send_to_opencode)
 end, { desc = 'Send prompt to OpenCode' })
 
+-- Opencode annotation lifecycle
+-- ah = hide, as = show (restore), ax = clear (delete forever).
+-- Hide keeps the extmark alive in the buffer with no virt_lines content, so it
+-- continues tracking buffer edits. Show re-attaches the saved virt_lines content
+-- at the extmark's *current* (possibly moved) position. Clear deletes the marks
+-- and the snapshot — no restore is possible after.
+local opencode_ns = vim.api.nvim_create_namespace('opencode-explain')
+-- hidden_annotations[buf] = { [extmark_id] = { virt_lines, virt_lines_above } }
+local hidden_annotations = {}
+
+vim.keymap.set('n', '<leader>ah', function()
+  local count = 0
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local marks = vim.api.nvim_buf_get_extmarks(buf, opencode_ns, 0, -1, { details = true })
+      local visible = {}
+      for _, m in ipairs(marks) do
+        if m[4] and m[4].virt_lines then
+          table.insert(visible, m)
+        end
+      end
+      if #visible > 0 then
+        hidden_annotations[buf] = hidden_annotations[buf] or {}
+        for _, m in ipairs(visible) do
+          local id, row, col, details = m[1], m[2], m[3], m[4]
+          hidden_annotations[buf][id] = {
+            virt_lines = details.virt_lines,
+            virt_lines_above = details.virt_lines_above,
+          }
+          -- Re-set with same id at current position, no virt_lines → invisible but tracking.
+          vim.api.nvim_buf_set_extmark(buf, opencode_ns, row, col, { id = id })
+        end
+        count = count + #visible
+      end
+    end
+  end
+  vim.notify(string.format('Agent: hid %d annotation(s)', count), vim.log.levels.INFO)
+end, { desc = 'Agent: hide virtual-text annotations (keep tracking)' })
+
+vim.keymap.set('n', '<leader>as', function()
+  local count = 0
+  for buf, by_id in pairs(hidden_annotations) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+      for id, saved in pairs(by_id) do
+        local pos = vim.api.nvim_buf_get_extmark_by_id(buf, opencode_ns, id, {})
+        if pos and #pos > 0 then
+          vim.api.nvim_buf_set_extmark(buf, opencode_ns, pos[1], pos[2], {
+            id = id,
+            virt_lines = saved.virt_lines,
+            virt_lines_above = saved.virt_lines_above,
+          })
+          count = count + 1
+        end
+      end
+    end
+  end
+  hidden_annotations = {}
+  if count > 0 then
+    vim.notify(string.format('Agent: shown %d annotation(s)', count), vim.log.levels.INFO)
+  else
+    vim.notify('Agent: no dismissed annotations to show', vim.log.levels.INFO)
+  end
+end, { desc = 'Agent: show dismissed virtual-text annotations' })
+
+vim.keymap.set('n', '<leader>ax', function()
+  local count = 0
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local marks = vim.api.nvim_buf_get_extmarks(buf, opencode_ns, 0, -1, {})
+      if #marks > 0 then
+        vim.api.nvim_buf_clear_namespace(buf, opencode_ns, 0, -1)
+        count = count + #marks
+      end
+    end
+  end
+  hidden_annotations = {}
+  vim.notify(string.format('Agent: cleared %d annotation(s) (no restore)', count), vim.log.levels.WARN)
+end, { desc = 'Agent: clear ALL virtual-text annotations (no restore)' })
+
 return {}
