@@ -4,7 +4,7 @@ local previewers = require 'telescope.previewers'
 local conf = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
-local i18n_module = require 'custom.plugins.i18n'
+local i18n_module = require 'plugins.i18n'
 local hs_completion = i18n_module() -- Call to get M module
 
 local function is_empty(t)
@@ -127,7 +127,7 @@ function M.open()
   find_translation()
 end
 
-local env = require 'custom.env'
+local env = require 'env'
 if not env.is_hubspot then
   return {}
 end

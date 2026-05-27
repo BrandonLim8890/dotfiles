@@ -1,29 +1,27 @@
--- Custom keymaps for movement
-
+-- Movement
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('n', 'N', 'Nzzzv')
+
+-- Clipboard
 vim.keymap.set('x', '<leader>p', [["_dP]])
 vim.keymap.set('n', '<leader>Y', [["+Y]])
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
 vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]])
-vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, { desc = '[f]ormat the file' })
-vim.keymap.set('n', 'n', 'nzzzv')
-vim.keymap.set('n', 'N', 'Nzzzv')
 
 -- Save
 vim.keymap.set({ 'i', 'x', 'n', 's' }, '<C-s>', '<cmd>w<cr><esc>', { desc = 'Save File' })
 
--- Buffer movemnt
-vim.keymap.set('n', '<leader>bd', ':bdel<Return>')
+-- Search: clear highlights
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Window commands
--- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
--- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
--- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
--- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- Buffers
+vim.keymap.set('n', '<leader>bd', ':bdel<Return>', { desc = 'Delete buffer' })
 
+-- Windows
 vim.keymap.set('n', '<leader>wv', '<C-w>v', { desc = 'Split window vertically' })
 vim.keymap.set('n', '<leader>wh', '<C-w>s', { desc = 'Split window horizontally' })
 vim.keymap.set('n', '<leader>we', '<C-w>=', { desc = 'Make splits equal size' })
@@ -34,27 +32,19 @@ vim.keymap.set('n', '<leader>w_', '<C-w>_', { desc = 'Maximize window height' })
 vim.keymap.set('n', '<leader>ww', '<C-w>w', { desc = 'Cycle windows' })
 vim.keymap.set('n', '<leader>qa', '<cmd>qa<CR>', { desc = 'Quit all' })
 
--- Diagnostic navigation (fast jumping without opening lists)
--- Use [q/]q (from trouble.lua) to navigate when trouble/quickfix lists are open
-vim.keymap.set('n', '[d', function() vim.diagnostic.jump { count = -1 } end, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', function() vim.diagnostic.jump { count = 1 } end, { desc = 'Go to next [D]iagnostic message' })
+-- Diagnostics
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump { count = -1 } end, { desc = 'Go to previous diagnostic' })
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump { count = 1 } end, { desc = 'Go to next diagnostic' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- -- is not what someone will guess without a bit more experience.
--- --
--- -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- -- or just use <C-\><C-n> to exit terminal mode
+-- Terminal
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+-- Neovide
 if vim.g.neovide then
-  local keymapOpts = {
-    silent = true,
-    noremap = true,
-  }
-  vim.keymap.set({ 'n', 'v' }, '<D-v>', '"*p', keymapOpts)
-  vim.keymap.set({ 'n', 'v' }, '<D-c>', '"*y', keymapOpts)
-  vim.keymap.set({ 'n', 'v' }, '<D-x>', '"*x', keymapOpts)
-  vim.keymap.set({ 'i' }, '<D-v>', '<C-r>+', keymapOpts)
+  local opts = { silent = true, noremap = true }
+  vim.keymap.set({ 'n', 'v' }, '<D-v>', '"*p', opts)
+  vim.keymap.set({ 'n', 'v' }, '<D-c>', '"*y', opts)
+  vim.keymap.set({ 'n', 'v' }, '<D-x>', '"*x', opts)
+  vim.keymap.set('i', '<D-v>', '<C-r>+', opts)
 end

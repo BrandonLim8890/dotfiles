@@ -1,4 +1,4 @@
-local env = require 'custom.env'
+local env = require 'env'
 if not env.is_hubspot then
   return {}
 end
