@@ -1,8 +1,12 @@
 tags
 test.sh
 .luarc.json
-nvim
 .DS_Store
 
-spell/
-lazy-lock.json
+# nvim
+.config/nvim/spell/
+.config/nvim/lazy-lock.json
+.config/nvim/target/
+
+# tmux — plugins are installed at runtime by tpm, not tracked
+.config/tmux/plugins/
