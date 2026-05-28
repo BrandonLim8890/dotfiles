@@ -1,4 +1,7 @@
 return {
+  -- Disable the kickstart default colorscheme so it doesn't fight nordic
+  { 'folke/tokyonight.nvim', enabled = false },
+
   -- Colorscheme
   {
     'AlexvZyl/nordic.nvim',
@@ -22,7 +25,7 @@ return {
       options = {
         theme = 'nordic',
         component_separators = '',
-        section_separators = { left = '', right = '' },
+        section_separators = { left = "\xee\x82\xb4", right = "\xee\x82\xb6" },
         disabled_filetypes = { 'alpha', 'Outline' },
       },
       tabline = {
@@ -81,7 +84,7 @@ return {
           },
         },
         lualine_z = {
-          { 'location', separator = { left = '', right = ' ' } },
+          { 'location', separator = { left = "\xee\x82\xb6", right = "\xee\x82\xb4 " } },
         },
       },
     },

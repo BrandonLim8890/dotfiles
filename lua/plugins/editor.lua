@@ -64,7 +64,7 @@ return {
     event = 'VeryLazy',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
-      vim.keymap.set('n', '<leader>vo', '<cmd>AerialToggle float<CR>', { desc = 'View Outline', noremap = true, silent = true })
+      vim.keymap.set('n', '<leader>vo', '<cmd>AerialToggle float<CR>', { desc = 'View Outline', noremap = true, silent = true, nowait = true })
       require('aerial').setup {
         backends = { 'treesitter', 'lsp' },
         layout = {
@@ -112,6 +112,11 @@ return {
         },
       }
       require('mini.cursorword').setup()
+
+      local statusline = require 'mini.statusline'
+      statusline.setup { use_icons = vim.g.have_nerd_font }
+      ---@diagnostic disable-next-line: duplicate-set-field
+      statusline.section_location = function() return '%2l:%-2v' end
     end,
   },
 

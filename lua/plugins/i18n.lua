@@ -10,13 +10,19 @@ local M = {
   },
 }
 
-local lspconfig_util = require 'lspconfig.util'
-local get_lib_dir = lspconfig_util.root_pattern('tsconfig.json', 'webpack.config.js', 'target')
-local get_root = lspconfig_util.root_pattern('.git', '.blazar-enabled', 'package.json')
+local get_lib_dir, get_root
+
+local function init_root_patterns()
+  if get_root then return end
+  local lspconfig_util = require 'lspconfig.util'
+  get_lib_dir = lspconfig_util.root_pattern('tsconfig.json', 'webpack.config.js', 'target')
+  get_root = lspconfig_util.root_pattern('.git', '.blazar-enabled', 'package.json')
+end
 
 ---@param bufnr number|nil
 ---@return string|nil
 function M.get_root_dir(bufnr)
+  init_root_patterns()
   local buffer_path = vim.api.nvim_buf_get_name(bufnr or vim.api.nvim_get_current_buf())
   return get_root(buffer_path)
 end
@@ -24,6 +30,7 @@ end
 ---@param bufnr number|nil
 ---@return string|nil
 function M.get_app_or_lib_dir(bufnr)
+  init_root_patterns()
   local buffer_path = vim.api.nvim_buf_get_name(bufnr or vim.api.nvim_get_current_buf())
   return get_lib_dir(buffer_path)
 end

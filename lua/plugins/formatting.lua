@@ -40,7 +40,7 @@ return {
       {
         '<leader>f',
         function() require('conform').format { async = true } end,
-        mode = { 'n', 'v' },
+        mode = '',
         desc = '[F]ormat buffer',
       },
     },

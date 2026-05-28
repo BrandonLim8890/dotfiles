@@ -21,8 +21,6 @@ return {
           map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
           map('gra', vim.lsp.buf.code_action, 'Code [A]ction', { 'n', 'x' })
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-          map('<leader>cr', vim.lsp.buf.rename, '[C]ode [R]ename')
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client:supports_method('textDocument/documentHighlight', event.buf) then
