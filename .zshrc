@@ -109,7 +109,7 @@ export EDITOR='nvim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source /Users/blim/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 alias serve="NODE_ARGS='--max_old_space_size=16384' bend reactor serve --update --ts-watch --enable-tools"
 alias sserve="bend reactor serve --update --ts-watch --enable-tools"
@@ -173,7 +173,7 @@ function cleanup() {
 autoload -Uz compinit && compinit
 
 # Added by nex: https://git.hubteam.com/HubSpot/nex
-. ~/.hubspot/shellrc
+# [ -f ~/.hubspot/shellrc ] && . ~/.hubspot/shellrc
 
 # Added by nex: https://git.hubteam.com/HubSpot/nex
 [ -e ~/.hubspot/shellrc ] && . ~/.hubspot/shellrc
