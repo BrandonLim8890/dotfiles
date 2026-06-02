@@ -20,26 +20,42 @@ return {
         end
 
         map('n', ']c', function()
-          if vim.wo.diff then vim.cmd.normal { ']c', bang = true }
-          else gitsigns.nav_hunk 'next' end
+          if vim.wo.diff then
+            vim.cmd.normal { ']c', bang = true }
+          else
+            gitsigns.nav_hunk 'next'
+          end
         end, { desc = 'Jump to next git [c]hange' })
         map('n', '[c', function()
-          if vim.wo.diff then vim.cmd.normal { '[c', bang = true }
-          else gitsigns.nav_hunk 'prev' end
+          if vim.wo.diff then
+            vim.cmd.normal { '[c', bang = true }
+          else
+            gitsigns.nav_hunk 'prev'
+          end
         end, { desc = 'Jump to previous git [c]hange' })
 
-        map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk' })
-        map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk' })
+        map('v', '<leader>hs', function()
+          gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'git [s]tage hunk' })
+        map('v', '<leader>hr', function()
+          gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'git [r]eset hunk' })
         map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
         map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
         map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })
         map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer' })
         map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
         map('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline' })
-        map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line' })
+        map('n', '<leader>hb', function()
+          gitsigns.blame_line { full = true }
+        end, { desc = 'git [b]lame line' })
         map('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index' })
-        map('n', '<leader>hD', function() gitsigns.diffthis '@' end, { desc = 'git [D]iff against last commit' })
-        map('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'git hunk [Q]uickfix (all files)' })
+        map('n', '<leader>hD', function()
+          gitsigns.diffthis '@'
+        end, { desc = 'git [D]iff against last commit' })
+        map('n', '<leader>hQ', function()
+          gitsigns.setqflist 'all'
+        end, { desc = 'git hunk [Q]uickfix (all files)' })
         map('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix (this file)' })
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git [b]lame line' })
         map('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git [w]ord diff' })
@@ -64,7 +80,8 @@ return {
             file_history_panel = {
               { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diffview' } },
               {
-                'n', 'vc',
+                'n',
+                'vc',
                 function()
                   local lib = require 'diffview.lib'
                   local view = lib.get_current_view()
@@ -104,10 +121,20 @@ return {
         auto_refresh = true,
         auto_show_console_on = 'error',
         highlight = {
-          italic = true, bold = true, underline = true,
-          red = '#BF616A', orange = '#D08770', yellow = '#EBCB8B',
-          green = '#A3BE8C', cyan = '#8FBCBB', blue = '#81A1C1', purple = '#88C0D0',
-          bg0 = '#1E222A', bg1 = '#242933', bg2 = '#2E3440', bg3 = '#3B4252',
+          italic = true,
+          bold = true,
+          underline = true,
+          red = '#BF616A',
+          orange = '#D08770',
+          yellow = '#EBCB8B',
+          green = '#A3BE8C',
+          cyan = '#8FBCBB',
+          blue = '#81A1C1',
+          purple = '#88C0D0',
+          bg0 = '#1E222A',
+          bg1 = '#242933',
+          bg2 = '#2E3440',
+          bg3 = '#3B4252',
         },
       }
     end,
@@ -119,7 +146,9 @@ return {
     dependencies = {
       {
         'ldelossa/litee.nvim',
-        config = function() require('litee.lib').setup() end,
+        config = function()
+          require('litee.lib').setup()
+        end,
       },
     },
     config = function()
@@ -149,7 +178,9 @@ return {
         return git_root
       end
 
-      local function go_to_github(path, cwd) vim.fn.jobstart({ 'gh', 'browse', path }, { cwd = cwd }) end
+      local function go_to_github(path, cwd)
+        vim.fn.jobstart({ 'gh', 'browse', path }, { cwd = cwd })
+      end
 
       local function copy_github_url(path, cwd)
         local result = vim.system({ 'gh', 'browse', '--no-browser', path }, { cwd = cwd }):wait()
@@ -161,14 +192,18 @@ return {
       local function with_context(fn)
         return function()
           local git_root, rel_path = resolve_repo_context()
-          if git_root then fn(git_root, rel_path) end
+          if git_root then
+            fn(git_root, rel_path)
+          end
         end
       end
 
       local function with_visual_lines(fn)
         return function()
           local git_root, rel_path = resolve_repo_context()
-          if not git_root then return end
+          if not git_root then
+            return
+          end
           local cursor_line = vim.fn.getpos('.')[2]
           local other_end = vim.fn.getpos('v')[2]
           if cursor_line > other_end then
@@ -189,7 +224,9 @@ return {
 
       vim.keymap.set('n', '<leader>ghp', function()
         local git_root = resolve_repo_root()
-        if not git_root then return end
+        if not git_root then
+          return
+        end
         vim.fn.jobstart({ 'gh', 'pr', 'view', '--web' }, {
           cwd = git_root,
           on_exit = function(_, exit_code)
@@ -199,32 +236,6 @@ return {
           end,
         })
       end, { desc = 'Create or view PR on GitHub' })
-
-      vim.keymap.set('n', '<leader>ghr', function()
-        local git_root = resolve_repo_root()
-        if not git_root then return end
-        vim.fn.jobstart({ 'gh', 'pr', 'checks', '--watch', '--fail-fast' }, {
-          cwd = git_root,
-          on_exit = function(_, exit_code)
-            if exit_code == 0 then
-              vim.notify('PR checks passed! Press <leader>ghy (yes) or <leader>ghn (no)', vim.log.levels.INFO)
-              vim.keymap.set('n', '<leader>ghy', function()
-                vim.fn.jobstart({ 'gh', 'pr', 'ready' }, { cwd = git_root })
-                vim.notify('PR marked as ready', vim.log.levels.INFO)
-                vim.keymap.del('n', '<leader>ghy')
-                vim.keymap.del('n', '<leader>ghn')
-              end, { desc = 'Mark PR as ready (temporary)' })
-              vim.keymap.set('n', '<leader>ghn', function()
-                vim.notify('PR not marked as ready', vim.log.levels.INFO)
-                vim.keymap.del('n', '<leader>ghy')
-                vim.keymap.del('n', '<leader>ghn')
-              end, { desc = 'Do not mark PR as ready (temporary)' })
-            else
-              vim.notify('PR checks failed', vim.log.levels.ERROR)
-            end
-          end,
-        })
-      end, { desc = 'Mark PR as ready when checks pass' })
     end,
   },
 }
