@@ -96,10 +96,18 @@ return {
       vim.list_extend(ensure_installed, extra_tools)
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      for name, server in pairs(servers) do
-        vim.lsp.config(name, server)
-        vim.lsp.enable(name)
-      end
+      require('mason-lspconfig').setup {
+        handlers = {
+          function(server_name)
+            if vim.lsp.is_enabled(server_name) then
+              return
+            end
+            local server = servers[server_name] or {}
+            vim.lsp.config(server_name, server)
+            vim.lsp.enable(server_name)
+          end,
+        },
+      }
     end,
   },
 }

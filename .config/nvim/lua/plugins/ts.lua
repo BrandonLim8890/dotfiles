@@ -113,7 +113,8 @@ local function setup_hubspot()
   }
 
   vim.keymap.set('n', '<leader>lr', function()
-    bend.reset()
+    vim.cmd 'BendReset'
+    vim.cmd 'lsp restart'
   end, { desc = 'Bend Restart' })
 
   vim.keymap.set('n', '<leader>cp', function()
