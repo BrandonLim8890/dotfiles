@@ -132,10 +132,7 @@ local function send_to_agent(prompt, agent_command, match_pattern)
     local cmd = (vim.fn.has 'mac' == 1 and 'pbpaste' or 'wl-paste') .. ' | tmux load-buffer -'
     vim.fn.system(cmd)
     -- Wrap content in bracketed paste escape sequences
-    local wrapped_cmd = string.format(
-      "printf '\\033[200~' && tmux save-buffer - && printf '\\033[201~\\n'",
-      found_pane
-    )
+    local wrapped_cmd = string.format("printf '\\033[200~' && tmux save-buffer - && printf '\\033[201~\\n'", found_pane)
     vim.fn.system('bash -c ' .. vim.fn.shellescape(wrapped_cmd) .. ' | tmux load-buffer -')
     vim.fn.system('tmux paste-buffer -t ' .. found_pane)
     vim.fn.system('tmux select-pane -t ' .. found_pane)
@@ -149,18 +146,9 @@ local function send_to_agent(prompt, agent_command, match_pattern)
   end
 end
 
-local function send_to_claude(prompt)
-  send_to_agent(prompt, 'exec claude', 'claude')
-end
-
 local function send_to_opencode(prompt)
   send_to_agent(prompt, 'opencode --prompt', 'python')
 end
-
-vim.keymap.set({ 'n', 'v' }, '<leader>ac', function()
-  local context = get_buffer_context()
-  open_prompt_editor(context, send_to_claude)
-end, { desc = 'Send prompt to Claude' })
 
 vim.keymap.set({ 'n', 'v' }, '<leader>ao', function()
   local context = get_buffer_context()
@@ -173,7 +161,7 @@ end, { desc = 'Send prompt to OpenCode' })
 -- continues tracking buffer edits. Show re-attaches the saved virt_lines content
 -- at the extmark's *current* (possibly moved) position. Clear deletes the marks
 -- and the snapshot — no restore is possible after.
-local opencode_ns = vim.api.nvim_create_namespace('opencode-explain')
+local opencode_ns = vim.api.nvim_create_namespace 'opencode-explain'
 -- hidden_annotations[buf] = { [extmark_id] = { virt_lines, virt_lines_above } }
 local hidden_annotations = {}
 
