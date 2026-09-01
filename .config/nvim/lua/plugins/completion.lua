@@ -18,7 +18,20 @@ return {
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
-      keymap = { preset = 'enter' },
+      keymap = {
+        preset = 'enter',
+        ['<C-f>'] = {
+          function()
+            local ok, suggestion = pcall(require, 'copilot.suggestion')
+            if ok and suggestion.is_visible() then
+              suggestion.accept()
+              return true
+            end
+          end,
+          'scroll_documentation_down',
+          'fallback',
+        },
+      },
       appearance = { nerd_font_variant = 'mono' },
       completion = {
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
