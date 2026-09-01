@@ -111,9 +111,6 @@ export EDITOR='nvim'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-alias serve="NODE_ARGS='--max_old_space_size=16384' bend reactor serve --update --ts-watch --enable-tools"
-alias sserve="bend reactor serve --update --ts-watch --enable-tools"
-alias testserve="NODE_ARGS='--max_old_space_size=16384' bend reactor serve --update --ts-watch --enable-tools --run-tests"
 alias gsync="git branch --merged | grep -v "master" >/tmp/merged-branches && nvim /tmp/merged-branches && xargs git branch -d </tmp/merged-branches"
 function atest() {
   local at_dir=$(find . -maxdepth 1 -type d -name "*acceptance-tests" | head -1)
@@ -156,48 +153,63 @@ function bvim() {
 }
 
 function bupdate() {
+  setopt localoptions noxtrace
+
   local base="$PWD"
 
-  # Find all repos with a static_conf.json, show as "category/repo" relative to base
   local selected
-  selected=$(find "$base" -mindepth 2 -maxdepth 2 -name "static_conf.json" \
-    | while read -r conf; do
-        local repo_dir
-        repo_dir=$(dirname "$conf")
-        echo "${repo_dir#$base/}"
-      done \
-    | sort \
-    | fzf --multi --prompt="Select repos: " --header="Tab to select multiple, Enter to confirm")
+  if [[ "$1" == "." ]]; then
+    selected="."
+  else
+    # Find immediate child repos with a static_conf.json.
+    selected=$(find "$base" -mindepth 2 -maxdepth 2 -name "static_conf.json" \
+      | while read -r conf; do
+          local repo_dir
+          repo_dir=$(dirname "$conf")
+          echo "${repo_dir#$base/}"
+        done \
+      | sort \
+      | fzf --multi --prompt="Select repos: " --header="Tab to select multiple, Enter to confirm")
+  fi
 
   [ -z "$selected" ] && return
 
-  # Group selected repos by their parent dir, collecting all package names per parent
-  declare -A parent_to_packages
+  # Group selected repos by their root directory, collecting all package names per repo.
+  declare -A repo_to_packages
   while IFS= read -r rel_path; do
-    local abs_path="$base/$rel_path"
-    local parent_dir
-    parent_dir=$(dirname "$abs_path")
-    local conf="$abs_path/static_conf.json"
+    local repo_dir="$base/$rel_path"
+    local conf="$repo_dir/static_conf.json"
     local pkgs
     pkgs=$(python3 -c "import json,sys; d=json.load(open('$conf')); print(' '.join(d.get('packages',[])))" 2>/dev/null)
     if [[ -n "$pkgs" ]]; then
-      if [[ -n "${parent_to_packages[$parent_dir]}" ]]; then
-        parent_to_packages[$parent_dir]="${parent_to_packages[$parent_dir]} $pkgs"
+      if [[ -n "${repo_to_packages[$repo_dir]}" ]]; then
+        repo_to_packages[$repo_dir]="${repo_to_packages[$repo_dir]} $pkgs"
       else
-        parent_to_packages[$parent_dir]="$pkgs"
+        repo_to_packages[$repo_dir]="$pkgs"
       fi
     fi
   done <<< "$selected"
 
-  # Run bend install --update then bend generate-code per parent dir
-  for parent_dir in "${(@k)parent_to_packages}"; do
-    local pkgs="${parent_to_packages[$parent_dir]}"
-    echo "==> cd $parent_dir"
-    echo "==> bend install --update $pkgs"
-    (cd "$parent_dir" && bend install --update $pkgs) || { echo "bend install failed in $parent_dir"; return 1; }
-    echo "==> bend generate-code $pkgs"
-    (cd "$parent_dir" && bend generate-code $pkgs) || { echo "bend generate-code failed in $parent_dir"; return 1; }
+  # Run each repository independently, but keep install before generation within it.
+  local -a pids
+  for repo_dir in "${(@k)repo_to_packages}"; do
+    local pkgs="${repo_to_packages[$repo_dir]}"
+    (
+      echo "==> cd $repo_dir"
+      echo "==> bend install --update $pkgs"
+      (cd "$repo_dir" && bend install --update ${=pkgs}) || { echo "bend install failed in $repo_dir"; exit 1; }
+      echo "==> bend generate-code $pkgs"
+      (cd "$repo_dir" && bend generate-code ${=pkgs}) || { echo "bend generate-code failed in $repo_dir"; exit 1; }
+    ) &
+    pids+=("$!")
   done
+
+  local rc=0
+  local pid
+  for pid in "${pids[@]}"; do
+    wait "$pid" || rc=1
+  done
+  return "$rc"
 }
 
 function cleanup() {
