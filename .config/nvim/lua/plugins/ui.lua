@@ -64,7 +64,7 @@ return {
           'filename',
         },
         lualine_c = {
-          { 'branch', icon = '' },
+          { 'branch', icon = '' },
         },
         lualine_x = {
           {
@@ -81,7 +81,7 @@ return {
           },
           {
             'diagnostics',
-            symbols = { error = ' ', warn = ' ', info = ' ', hint = ' ' },
+            symbols = { error = '󰅚 ', warn = '󰀪 ', info = '󰋽 ', hint = '󰌶 ' },
             update_in_insert = true,
           },
         },

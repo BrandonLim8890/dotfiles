@@ -32,9 +32,15 @@ vim.keymap.set('n', '<leader>w_', '<C-w>_', { desc = 'Maximize window height' })
 vim.keymap.set('n', '<leader>ww', '<C-w>w', { desc = 'Cycle windows' })
 vim.keymap.set('n', '<leader>qa', '<cmd>qa<CR>', { desc = 'Quit all' })
 
+vim.keymap.set('n', '<leader>w', '<C-w>', { desc = 'Window commands' })
+
 -- Diagnostics
-vim.keymap.set('n', '[d', function() vim.diagnostic.jump { count = -1 } end, { desc = 'Go to previous diagnostic' })
-vim.keymap.set('n', ']d', function() vim.diagnostic.jump { count = 1 } end, { desc = 'Go to next diagnostic' })
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.jump { count = -1 }
+end, { desc = 'Go to previous diagnostic' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.jump { count = 1 }
+end, { desc = 'Go to next diagnostic' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 
 -- Terminal
