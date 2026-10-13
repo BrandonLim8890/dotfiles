@@ -38,8 +38,13 @@ return {
         accept = { auto_brackets = { enabled = false } },
       },
       sources = {
-        default = { 'lsp', 'path', 'lazydev', 'snippets' },
+        default = vim.list_extend({ 'lsp', 'path', 'lazydev', 'snippets' }, require('env').is_hubspot and { 'hs_translations' } or {}),
         providers = {
+          hs_translations = require('env').is_hubspot and {
+            name = 'HubSpot Translations',
+            module = 'hubspot-completion',
+            score_offset = 100,
+          } or nil,
           lazydev = {
             min_keyword_length = 2,
             name = 'LazyDev',

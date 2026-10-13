@@ -126,13 +126,50 @@ return {
 
       local builtin = require 'telescope.builtin'
 
+      -- Jump to an i18n translation if the cursor is on a known key; returns true on success
+      local function goto_i18n_key(buf)
+        local ok, i18n = pcall(require, 'hubspot-i18n')
+        if not ok then
+          return false
+        end
+        local node = vim.treesitter.get_node()
+        if not node then
+          return false
+        end
+        local t = node:type()
+        if t ~= 'string' and t ~= 'string_fragment' and t ~= 'template_string' then
+          node = node:parent()
+          if not node or (node:type() ~= 'string' and node:type() ~= 'template_string') then
+            return false
+          end
+        end
+        local text = vim.treesitter.get_node_text(node, buf)
+        local key = text:match '^[\'"`](.+)[\'"`]$' or text
+        local dir = i18n.get_app_or_lib_dir(buf)
+        local pos = dir and i18n.get_key_position(dir, key)
+        if not pos then
+          return false
+        end
+        vim.cmd.edit(pos.file)
+        vim.api.nvim_win_set_cursor(0, { pos.row + 1, pos.col })
+        if pos.file:find(vim.env.HOME .. '/.hubspot/static-archive', 1, true) then
+          vim.bo.readonly = true
+          vim.bo.modifiable = false
+        end
+        return true
+      end
+
       -- LSP pickers via Telescope (set on LspAttach so they use the buffer-local server)
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
         callback = function(event)
           local buf = event.buf
           vim.keymap.set('n', 'grr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
-          vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+          vim.keymap.set('n', 'gd', function()
+            if not goto_i18n_key(buf) then
+              builtin.lsp_definitions()
+            end
+          end, { buffer = buf, desc = '[G]oto [D]efinition (i18n key or LSP)' })
           vim.keymap.set('n', 'grt', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype Definition' })
           vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buffer = buf, desc = 'Open Document Symbols' })
           vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buffer = buf, desc = 'Open Workspace Symbols' })
