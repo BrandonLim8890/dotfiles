@@ -23,6 +23,7 @@ mv ~/.zprofile ~/.zprofile.bak
 mv ~/.ideavimrc ~/.ideavimrc.bak
 mv ~/.config/nvim ~/.config/nvim.bak
 mv ~/.config/tmux ~/.config/tmux.bak
+mv ~/.config/tmux-sessionizer ~/.config/tmux-sessionizer.bak
 mv ~/.config/ghostty ~/.config/ghostty.bak
 # Symlink everything
 stow --target=$HOME .
@@ -47,6 +48,9 @@ source ~/.zshrc
 ```bash
 # Install TPM
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# tmux-sessionizer (stowed to ~/.config/tmux-sessionizer) needs fzf
+brew install fzf
 ```
 
 Then start tmux and press `Ctrl+a + I` to install all plugins.
