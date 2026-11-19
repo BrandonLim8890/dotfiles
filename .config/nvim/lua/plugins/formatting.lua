@@ -15,7 +15,8 @@ return {
           typescriptreact = true,
           html = true,
           css = true,
-          java = true,
+          json = true,
+          jsonc = true,
         }
         if enabled[vim.bo[bufnr].filetype] then
           return { timeout_ms = 500 }
@@ -33,13 +34,16 @@ return {
         typescriptreact = { 'prettierd' },
         html = { 'prettierd' },
         css = { 'prettierd' },
-        java = { 'prettierd' },
+        json = { 'prettierd' },
+        jsonc = { 'prettierd' },
       },
     },
     keys = {
       {
         '<leader>f',
-        function() require('conform').format { async = true } end,
+        function()
+          require('conform').format { async = true }
+        end,
         mode = '',
         desc = '[F]ormat buffer',
       },
