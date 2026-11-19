@@ -1,0 +1,22 @@
+# This file replaces stow's built-in ignore list, so the defaults are repeated here.
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+
+# Repo-local scratch / build output
+^/99_tmp
+^/target
+\.DS_Store
