@@ -1,10 +1,11 @@
 # dotfiles
 
-Personal config files for nvim, tmux, ghostty, and zsh — managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal config files for nvim, IdeaVim, tmux, ghostty, and zsh — managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 ## What's included
 
 - **nvim** — Neovim config with lazy.nvim, treesitter, and LSP
+- **ideavim** — `.ideavimrc` for IntelliJ, porting the native keymaps from the nvim config
 - **tmux** — Nord theme via `nord-tmux`, TPM plugins, vim-tmux-navigator
 - **ghostty** — Terminal config with custom smear shader
 - **zsh** — oh-my-zsh with fzf-tab, zsh-syntax-highlighting, and zsh-autosuggestions
@@ -19,6 +20,7 @@ cd ~/dotfiles
 # Remove any conflicting files first
 mv ~/.zshrc ~/.zshrc.bak
 mv ~/.zprofile ~/.zprofile.bak
+mv ~/.ideavimrc ~/.ideavimrc.bak
 mv ~/.config/nvim ~/.config/nvim.bak
 mv ~/.config/tmux ~/.config/tmux.bak
 mv ~/.config/ghostty ~/.config/ghostty.bak

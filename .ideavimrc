@@ -1,0 +1,85 @@
+" IdeaVim config, ported from .config/nvim (keymaps.lua / options.lua)
+
+let mapleader = " "
+
+" Line numbers
+set number
+
+" Search
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+
+" Scrolling / timing
+set scrolloff=8
+set timeoutlen=300
+
+" Plugins (bundled with IdeaVim, no extra install)
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+" clever-f: closest match to flash.nvim's char mode (multi-line f/t, repeat with same key)
+Plug 'rhysd/clever-f.vim'
+
+" mini.surround keys (sa/sd/sr) instead of vim-surround's ys/ds/cs
+nmap sa <Plug>YSurround
+xmap sa <Plug>VSurround
+nmap sd <Plug>DSurround
+nmap sr <Plug>CSurround
+
+" Movement
+vnoremap J <Action>(MoveLineDown)
+vnoremap K <Action>(MoveLineUp)
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap n nzz
+nnoremap N Nzz
+
+" Clipboard
+xnoremap <leader>p "_dP
+nnoremap <leader>Y "+Y
+nnoremap <leader>y "+y
+vnoremap <leader>y "+y
+nnoremap <leader>d "_d
+vnoremap <leader>d "_d
+
+" Save (let Vim, not the IDE, handle <C-s> so the mappings below apply)
+sethandler <C-S> a:vim
+nnoremap <C-s> :w<CR><Esc>
+inoremap <C-s> <Esc>:w<CR>
+xnoremap <C-s> <Esc>:w<CR>
+
+" Search: clear highlights
+nnoremap <Esc> :nohlsearch<CR>
+
+" Buffers
+nnoremap <leader>bd <Action>(CloseContent)
+
+" Windows
+" Split navigation (vim-tmux-navigator in nvim); sethandler so the IDE doesn't eat these keys
+sethandler <C-h> a:vim
+sethandler <C-j> a:vim
+sethandler <C-k> a:vim
+sethandler <C-l> a:vim
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+vnoremap <C-h> <Esc><C-w>h
+vnoremap <C-j> <Esc><C-w>j
+vnoremap <C-k> <Esc><C-w>k
+vnoremap <C-l> <Esc><C-w>l
+nnoremap <leader>wv <C-w>v
+nnoremap <leader>wh <C-w>s
+nnoremap <leader>wq <C-w>q
+nnoremap <leader>wo <C-w>o
+nnoremap <leader>ww <C-w>w
+nnoremap <leader>w <C-w>
+" nvim's <leader>we (<C-w>=) and <leader>w_ (<C-w>_) are skipped:
+" IdeaVim has no window resize commands.
+nnoremap <leader>wm <Action>(MaximizeEditorInSplit)
+
+" Diagnostics
+nnoremap [d <Action>(GotoPreviousError)
+nnoremap ]d <Action>(GotoNextError)
+nnoremap <leader>e <Action>(ShowErrorDescription)
