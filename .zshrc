@@ -77,6 +77,7 @@ plugins=(
   zsh-autosuggestions
   # zsh-autocomplete
   z
+  zsh-syntax-highlighting
 )
 
 zstyle ':completion:*' menu no
@@ -109,7 +110,6 @@ export EDITOR='nvim'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source ~/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 alias gsync="git branch --merged | grep -v "master" >/tmp/merged-branches && nvim /tmp/merged-branches && xargs git branch -d </tmp/merged-branches"
 function atest() {

@@ -32,9 +32,9 @@ stow --target=$HOME .
 ### 2. Zsh plugins
 
 ```bash
-# zsh-syntax-highlighting
+# zsh-syntax-highlighting (not bundled with oh-my-zsh)
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-  ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # fzf-tab
 git clone https://github.com/Aloxaf/fzf-tab \
