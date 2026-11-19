@@ -38,7 +38,7 @@ return {
 
       _99.setup {
         provider = DvxProvider,
-        model = 'openai_locked/gpt-5.6-luna',
+        model = 'openai_locked/gpt-6-luna',
         tmp_dir = './99_tmp',
         md_files = { 'AGENT.md' },
         logger = {
