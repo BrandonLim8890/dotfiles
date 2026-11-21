@@ -1,3 +1,7 @@
+-- Disabled in favour of Metals (see metals.lua). Kept for easy rollback:
+-- delete the `return {}` line and the --[==[ / ]==] markers to re-enable.
+do return {} end
+--[==[
 local env = require 'env'
 
 -- Cirque is HubSpot's Mill-backed Java LSP (navigation only). Installed and updated
@@ -94,3 +98,4 @@ return {
     end,
   },
 }
+]==]
